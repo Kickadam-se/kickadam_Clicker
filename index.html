@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickadam Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="snow-container"></div>
+    
+    <!-- Round button in top right corner -->
+    <a href="https://discord.gg/KgAM2Dt4CP" target="_blank" class="corner-button">
+        <img src="button.jpg" alt="Button">
+    </a>
+    
+    <div class="container">
+        <h1>🎄 Kickadam Clicker 🎄</h1>
+        
+        <div class="score-section">
+            <div class="score">
+                <span class="score-label">Score:</span>
+                <span id="score">0</span>
+            </div>
+            <div class="per-second">
+                <span class="score-label">Per second:</span>
+                <span id="perSecond">0</span>
+            </div>
+            <div class="money-display">
+                <span class="score-label">💰 Money:</span>
+                <span id="money">0</span>
+                <div class="click-progress-container">
+                    <div class="click-progress-bar" id="clickProgress"></div>
+                    <span class="click-progress-text">Click 3 times = 1💰</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="clicker-section">
+            <div id="clickerImage" class="clicker-image">
+                <img src="logo.png" alt="Click here!" id="mainImage">
+                <div class="click-effect" id="clickEffect"></div>
+            </div>
+        </div>
+
+        <div class="upgrades-section">
+            <h2>⭐ Upgrades ⭐</h2>
+            <div class="upgrades-grid" id="upgradesContainer"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
