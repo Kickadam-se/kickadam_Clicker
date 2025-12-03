@@ -133,6 +133,9 @@ const upgrades = [
     }
 ];
 
+// Track code usage count
+let codeUsageCount = 0;
+
 // Initialize game
 function init() {
     loadGame();
@@ -140,9 +143,95 @@ function init() {
     updateDisplay();
     startAutoProduction();
     createSnowflakes();
+    setupCodeModal();
     
     // Add click event to main image
     document.getElementById('clickerImage').addEventListener('click', handleClick);
+}
+
+// Setup code modal
+function setupCodeModal() {
+    const codeButton = document.getElementById('codeButton');
+    const modal = document.getElementById('codeModal');
+    const submitButton = document.getElementById('submitCode');
+    const cancelButton = document.getElementById('cancelCode');
+    const codeInput = document.getElementById('codeInput');
+    const codeMessage = document.getElementById('codeMessage');
+    
+    codeButton.addEventListener('click', () => {
+        modal.classList.add('active');
+        codeInput.value = '';
+        codeMessage.textContent = '';
+    });
+    
+    cancelButton.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    submitButton.addEventListener('click', () => {
+        const code = codeInput.value.trim();
+        if (code === '0987654321') {
+            if (codeUsageCount >= 3) {
+                codeMessage.textContent = 'Code limit reached! (3/3 used)';
+                codeMessage.className = 'modal-message error';
+            } else {
+                money += 100;
+                codeUsageCount++;
+                updateDisplay();
+                saveGame();
+                
+                // Close modal immediately
+                modal.classList.remove('active');
+                
+                // Start break and heal animation (8 seconds)
+                breakAndHealLogo();
+            }
+        } else {
+            codeMessage.textContent = '❌ Invalid code!';
+            codeMessage.className = 'modal-message error';
+        }
+    });
+    
+    codeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitButton.click();
+        }
+    });
+}
+
+// Break and heal logo animation (8 seconds total)
+function breakAndHealLogo() {
+    const img = document.getElementById('mainImage');
+    const clickerDiv = document.getElementById('clickerImage');
+    
+    // Disable clicking during animation
+    clickerDiv.style.pointerEvents = 'none';
+    
+    // Phase 1: Break apart (4 seconds)
+    img.style.transition = 'all 4s ease-in-out';
+    img.style.transform = 'scale(0) rotate(720deg)';
+    img.style.opacity = '0';
+    img.style.filter = 'blur(20px) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5))';
+    
+    // Phase 2: Heal back together (4 seconds)
+    setTimeout(() => {
+        img.style.transition = 'all 4s ease-in-out';
+        img.style.transform = 'scale(1) rotate(0deg)';
+        img.style.opacity = '1';
+        img.style.filter = 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.5))';
+        
+        // Re-enable clicking after animation
+        setTimeout(() => {
+            clickerDiv.style.pointerEvents = 'auto';
+            img.style.transition = 'transform 0.1s';
+        }, 4000);
+    }, 4000);
 }
 
 // Handle click on main image
@@ -306,6 +395,7 @@ function saveGame() {
         clickPower: clickPower,
         money: money,
         clickCount: clickCount,
+        codeUsageCount: codeUsageCount,
         upgrades: upgrades.map(u => ({ id: u.id, owned: u.owned }))
     };
     localStorage.setItem('julClickerSave', JSON.stringify(gameState));
@@ -319,6 +409,7 @@ function loadGame() {
         score = gameState.score || 0;
         money = gameState.money || 0;
         clickCount = gameState.clickCount || 0;
+        codeUsageCount = gameState.codeUsageCount || 0;
         clickPower = 1; // Reset to base
         
         if (gameState.upgrades) {
